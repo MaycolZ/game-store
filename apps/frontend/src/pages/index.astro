@@ -1,17 +1,47 @@
 ---
-
+// 1. Aquí escribimos el código del servidor (lo que se ejecuta antes de mostrar la página)
+const response = await fetch('http://localhost:3000/api/games');
+const data = await response.json();
+const games = data.docs; // Payload siempre devuelve los resultados dentro de "docs"
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Mi Tienda de Juegos</title>
+  </head>
+  <body style="font-family: system-ui, sans-serif; background: #1a1a1a; color: white; padding: 2rem;">
+    
+    <h1>Catálogo de Juegos</h1>
+    
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+      {games.map((game: any) => (
+        <article style="background: #2a2a2a; padding: 1rem; border-radius: 8px; width: 300px;">
+          
+          {/* Le agregamos http://localhost:3000 a la imagen porque viene del backend */}
+          {game.coverImage && (
+            <img 
+              src={`http://localhost:3000${game.coverImage.url}`} 
+              alt={game.coverImage.alt}
+              style="width: 100%; border-radius: 4px;"
+            />
+          )}
+          
+          <h2 style="margin-bottom: 0.5rem;">{game.title}</h2>
+          <p style="margin: 0; color: #4ade80; font-weight: bold;">
+            ${game.price.toLocaleString('es-CL')} CLP
+          </p>
+          <p style="margin-top: 0.5rem; color: #aaa;">
+            Plataforma: {game.platform === 'ps4' ? 'PlayStation 4' : 'PC'}
+          </p>
+          <p style="margin-top: 0.5rem; color: #aaa; font-size: 0.9rem;">
+            {game.isDigital ? 'Formato Digital' : 'Formato Físico'}
+          </p>
+          
+        </article>
+      ))}
+    </div>
+
+  </body>
 </html>
