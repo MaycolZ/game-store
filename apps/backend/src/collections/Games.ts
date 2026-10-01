@@ -16,6 +16,13 @@ export const Games: CollectionConfig = {
       required: true,
     },
     {
+      name: 'coverImage',
+      label: 'Imagen de Portada',
+      type: 'upload',
+      relationTo: 'media', // Esto lo conecta con la colección Media que ya venía por defecto
+      required: true, // Ponlo en 'false' temporalmente si Prototype aún no tiene imagen y no quieres que tire error al guardar
+    },
+    {
       name: 'price',
       label: 'Precio (CLP)',
       type: 'number',

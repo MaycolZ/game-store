@@ -171,6 +171,7 @@ export interface Media {
 export interface Game {
   id: number;
   title: string;
+  coverImage: number | Media;
   price: number;
   platform: 'ps4' | 'pc';
   isDigital?: boolean | null;
@@ -302,6 +303,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface GamesSelect<T extends boolean = true> {
   title?: T;
+  coverImage?: T;
   price?: T;
   platform?: T;
   isDigital?: T;
