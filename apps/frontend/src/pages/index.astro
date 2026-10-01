@@ -1,8 +1,7 @@
 ---
-// 1. Aquí escribimos el código del servidor (lo que se ejecuta antes de mostrar la página)
 const response = await fetch('http://localhost:3000/api/games');
 const data = await response.json();
-const games = data.docs; // Payload siempre devuelve los resultados dentro de "docs"
+const games = data.docs;
 ---
 
 <html lang="es">
@@ -11,37 +10,153 @@ const games = data.docs; // Payload siempre devuelve los resultados dentro de "d
     <meta name="viewport" content="width=device-width" />
     <title>Mi Tienda de Juegos</title>
   </head>
-  <body style="font-family: system-ui, sans-serif; background: #1a1a1a; color: white; padding: 2rem;">
+  <body>
     
-    <h1>Catálogo de Juegos</h1>
-    
-    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
-      {games.map((game: any) => (
-        <article style="background: #2a2a2a; padding: 1rem; border-radius: 8px; width: 300px;">
-          
-          {/* Le agregamos http://localhost:3000 a la imagen porque viene del backend */}
-          {game.coverImage && (
-            <img 
-              src={`http://localhost:3000${game.coverImage.url}`} 
-              alt={game.coverImage.alt}
-              style="width: 100%; border-radius: 4px;"
-            />
-          )}
-          
-          <h2 style="margin-bottom: 0.5rem;">{game.title}</h2>
-          <p style="margin: 0; color: #4ade80; font-weight: bold;">
-            ${game.price.toLocaleString('es-CL')} CLP
-          </p>
-          <p style="margin-top: 0.5rem; color: #aaa;">
-            Plataforma: {game.platform === 'ps4' ? 'PlayStation 4' : 'PC'}
-          </p>
-          <p style="margin-top: 0.5rem; color: #aaa; font-size: 0.9rem;">
-            {game.isDigital ? 'Formato Digital' : 'Formato Físico'}
-          </p>
-          
-        </article>
-      ))}
-    </div>
+    <main class="container">
+      <header>
+        <h1>Catálogo de Juegos</h1>
+      </header>
+      
+      <div class="games-grid">
+        {games.map((game: any) => (
+          <article class="game-card">
+            
+            {game.coverImage ? (
+              <img 
+                src={`http://localhost:3000${game.coverImage.url}`} 
+                alt={game.coverImage.alt}
+                class="game-image"
+              />
+            ) : (
+              <div class="game-image-placeholder">Sin imagen</div>
+            )}
+            
+            <div class="game-info">
+              <h2>{game.title}</h2>
+              <p class="price">${game.price.toLocaleString('es-CL')} CLP</p>
+              
+              <div class="tags">
+                <span class="tag platform">{game.platform === 'ps4' ? 'PS4' : 'PC'}</span>
+                <span class="tag">{game.isDigital ? 'Digital' : 'Físico'}</span>
+              </div>
+            </div>
+
+          </article>
+        ))}
+      </div>
+    </main>
 
   </body>
 </html>
+
+<style>
+  /* Variables de color para mantener consistencia */
+  :root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --accent: #4ade80; /* Verde estilo Xbox/Dinero */
+    --playstation: #00439c; /* Azul PlayStation */
+  }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 1200px; /* Ancho máximo para monitores grandes */
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  /* MAGIA RESPONSIVA: CSS Grid */
+  .games-grid {
+    display: grid;
+    /* Tarjetas más pequeñas (220px) que se ajustan solas según la pantalla */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+
+  /* Diseño de cada tarjeta */
+  .game-card {
+    background-color: var(--card-bg);
+    border-radius: 12px; /* Bordes redondeados modernos */
+    overflow: hidden; /* Corta la imagen para que respete el borde curvo */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Efecto al pasar el mouse por encima */
+  .game-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Las imágenes mantendrán proporción de caja de juego (3:4) */
+  .game-image, .game-image-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+  }
+  
+  .game-image-placeholder {
+    background: #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+
+  .game-info {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Empuja las etiquetas al fondo si los títulos tienen distintos largos */
+  }
+
+  .game-info h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+
+  .price {
+    margin: 0 0 1rem 0;
+    color: var(--accent);
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+
+  /* Etiquetas tipo "píldora" */
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto; 
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+    background: #374151;
+    color: #e5e7eb;
+    font-weight: 500;
+  }
+
+  .tag.platform {
+    background: var(--playstation);
+  }
+</style>
